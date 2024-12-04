@@ -149,7 +149,7 @@
 
 #slide[
   == Our Approach: Angle Bound Half-edge Collapse
-    Adaptation from previous work 
+    Adaptation from previous work.
     #footnote[Hinderink et al. "Angle-Bounded 2D Mesh Simplification." _Computer Aided Geometric Design_, vol 95, May 2022, p. 102085]
 
     _Half-edge collapse_ with a minimum angle criterion to inner angles
@@ -158,7 +158,25 @@
 
 #slide[
   == Architecture Overview
-  First, consider the data flow in Oceanbox's web app
+  #grid(columns: (1fr, 42%),
+    [
+      We concentrate on the data flow of _Archives_.
 
+      - _Hindcast_ simulations
+      - _User invoked_ simulations
+
+      Hindcasts are periodically produced, and are the basis of visualizations.
+
+      _These are the archives we aim to compress/reduce._
+    ],
+    [#image("figures/oceanbox-arch.svg")],
+  )
+]
+
+#slide[
+  #grid(columns: (1fr, 53%), gutter: 1.5cm, 
+      [#image("figures/oceanbox-arch.svg")],
+      [#image("figures/shaver-arch.svg")],
+    )
 ]
 
