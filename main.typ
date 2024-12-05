@@ -10,6 +10,13 @@
 
 #show: simple-theme.with(footer: none)
 
+// Use lighter gray color for table stroke
+#set table(
+  inset: 7pt,
+  stroke: (0.5pt + luma(200)),
+)
+// Show table header in small caps
+#show table.cell.where(y: 0): smallcaps
 
 #title-slide[
   = #title
@@ -153,7 +160,22 @@
     #footnote[Hinderink et al. "Angle-Bounded 2D Mesh Simplification." _Computer Aided Geometric Design_, vol 95, May 2022, p. 102085]
 
     _Half-edge collapse_ with a minimum angle criterion to inner angles
-    #image("figures/half-edge-bad-angles.svg", width: 70%)
+    #image("figures/half-edge-collapse.svg", width: 70%)
+]
+
+#slide[
+  == Our Approach: Angle Bound Half-edge Collapse
+  #grid(columns: (1fr, 55%), gutter: 1.5cm,
+    [
+      - We collapse $v$ into $v'$ by collapsing the half-edge $v -> v'$
+      - We define a strict angle bound $theta$
+      - We ensure inner angles $theta_n$ respect $theta_n > theta$
+    ],
+    [
+      #image("figures/half-edge-collapse.svg")
+      #image("figures/half-edge-bad-angles.svg")
+    ]
+  )
 ]
 
 #slide[
@@ -180,3 +202,285 @@
     )
 ]
 
+#slide[
+  == Implementation Details
+
+  *Two-fold design:*
+  #grid(columns: 2, gutter: 1.5cm, 
+    [
+      _Grid Simplification_
+      - Once per grid geometry
+        - Can be slow
+      - Boundary nodes preserved
+    ],
+    [
+      _Archive Application_
+      - Picking out values from full res -> compressed
+      - Vertices a proper subset of original vertices
+      - Also truncate depth dimension
+    ],
+  )
+]
+
+#slide[
+  == Evaluation
+
+  #grid(columns: 2, gutter: 1.5cm,
+    [
+      *Visualization similarity*
+      - Inspection of raster images
+    ],
+    [
+      *Compression/Speedup*
+      - Compression ratio of payloads
+      - Transfer speed
+    ],
+    [
+      *Geometric Error*
+      - Angle distribution
+      - Triangulation inspection
+    ],
+    [
+      _For the Master:_
+      - Pixel-by-pixel comparison
+      - Client execution time
+      - Hausdorff distance
+    ],
+  )
+]
+
+#slide[
+  == Evaluation
+  #grid(columns: 2, gutter: 1.5cm,
+    [
+      *Grids*
+      - Buksnes Waste (test)
+      - PO5 (prod)
+      - PO6 (prod)
+    ],
+    [
+      *Comparison*
+      + Original grid
+      + Randomly reduced #footnote[Triangulated with Delaunay]
+      + Angle bound, $theta = 28degree$
+      + Angle bound, $theta = 30degree$
+    ],
+  )
+]
+
+#slide[
+  == Visualization Similarity: Speed, Buksnes Waste
+  #set text(size: 18pt)
+  #grid(columns: (23%, 23%, 23%, 23%) , gutter: .5cm,
+    [
+      #image("figures/napp-1-speed.png")
+      Original grid
+    ],
+    [
+      #image("figures/napp-4-speed.png")
+      Random reduction
+    ],
+    [
+      #image("figures/napp-2-speed.png")
+      Angle bound, 28$degree$
+    ],
+    [
+      #image("figures/napp-3-speed.png")
+      Angle bound, 30$degree$
+    ],
+  )
+]
+
+#slide[
+  == Visualization Similarity: Temperature, PO5
+  #set text(size: 18pt)
+  #grid(columns: (1fr, 1fr), gutter: 1.5cm,
+    [
+      #image("figures/PO5-original-temp-2.png")
+      Original grid
+    ],
+    [
+      #image("figures/PO5-28-temp-2.png")
+      Angle bound, 28$degree$
+    ]
+  )
+]
+
+#slide[
+  == Visualization Similarity: Streams, PO5
+  #set text(size: 18pt)
+  #grid(columns: (1fr, 1fr), gutter: 1.5cm,
+    [
+      #image("figures/PO5-original-streams.png")
+      Original grid
+    ],
+    [
+      #image("figures/PO5-28-streams.png")
+      Angle bound, 28$degree$
+    ]
+  )
+]
+
+#slide[
+  == Geometric Similarity: Angle Distribution
+  #set text(size: 18pt)
+  #grid(columns: (23%, 23%, 23%, 23%) , gutter: .5cm,
+    [
+      #image("figures/buksnes-angles.svg")
+      Original grid
+    ],
+    [
+      #image("figures/buksnes-angles-random.svg")
+      Random reduction
+    ],
+    [
+      #image("figures/buksnes-angles-28.svg")
+      Angle bound, 28$degree$
+    ],
+    [
+      #image("figures/buksnes-angles-30.svg")
+      Angle bound, 30$degree$
+    ],
+  )
+]
+
+#slide[
+  == Geometric Similarity: Triangulation
+  #set text(size: 18pt)
+  #grid(columns: (23%, 23%, 23%, 23%) , gutter: .5cm,
+    [
+      #image("figures/napp-1-grid.png")
+      Original grid
+    ],
+    [
+      #image("figures/napp-random-grid.png")
+      Random reduction
+    ],
+    [
+      #image("figures/napp-2-grid.png")
+      Angle bound, 28$degree$
+    ],
+    [
+      #image("figures/napp-3-grid.png")
+      Angle bound, 30$degree$
+    ],
+  )
+]
+
+#slide[
+  == Compression Ratio
+  #set text(size: 20pt)
+  #table(
+    columns: 6,
+    align: center + horizon,
+    /* --- header --- */
+    table.header(
+      // table.cell lets us access properties such as rowspan and colspan to customize the cells
+      table.cell([*Data set*], rowspan: 2),
+      table.cell([*Size / Compression Ratio*], colspan: 5),
+      [Nodes],
+      [Elements],
+      [Geometry],
+      [Nodal variable],
+      [On disk],
+    ),
+    fill: (_, y) => if y == 2 or y == 6 or y == 8 {
+      gray.lighten(75%)
+    },
+    /* --- body --- */
+    [Buksnes Waste],
+    [25 136],
+    [48 332],
+    [762 KiB],
+    [98 KiB],
+    [475 686 KiB],
+    [Random],
+    [1.87],
+    [1.93],
+    [1.91],
+    [1.88],
+    [29.27],
+    [SHAVER 28$degree$],
+    [1.71],
+    [1.76],
+    [1.74],
+    [1.72],
+    [26.62],
+    [SHAVER 30$degree$],
+    [1.43],
+    [1.45],
+    [1.45],
+    [1.44],
+    [22.05],
+    [PO5],
+    [459 242],
+    [869 324],
+    [13 669 KiB],
+    [1 793 KiB],
+    [8 473 272 KiB],
+    [SHAVER 28$degree$],
+    [1.67],
+    [1.74],
+    [1.71],
+    [1.67],
+    [26.03],
+    [PO6],
+    [1 691 194],
+    [3 251 577],
+    [51 317 KiB],
+    [6 606 KiB],
+    [32 002 309 KiB],
+    [SHAVER 28$degree$],
+    [1.64],
+    [1.69],
+    [1.67],
+    [1.64],
+    [25.58],
+  )
+]
+
+#slide[
+  == Compression Ratio
+  #set text(size: 20pt)
+
+  #table(
+    columns: 3,
+    align: center + horizon,
+    /* --- header --- */
+    table.header(
+      // table.cell lets us access properties such as rowspan and colspan to customize the cells
+      table.cell([*Data set*], rowspan: 2),
+      table.cell([*Size*], colspan: 2),
+      [Geometry],
+      [Nodal variable],
+    ),
+    fill: (_, y) => if y == 2 or y == 6 or y == 8 {
+      gray.lighten(75%)
+    },
+    /* --- body --- */
+    [Buksnes Waste],
+    [363 KiB],
+    [126 KiB],
+    [Random],
+    [71.2%],
+    [98.4%],
+    [SHAVER 28$degree$],
+    [93.1%],
+    [98.8%],
+    [SHAVER 30$degree$],
+    [93.8%],
+    [99.3%],
+    [PO5],
+    [7 250 KiB],
+    [2 300 KiB],
+    [SHAVER 28$degree$],
+    [93.0%],
+    [100.6%],
+    [PO6],
+    [26 200 KiB],
+    [8 460 KiB],
+    [SHAVER 28$degree$],
+    [91.6%],
+    [100%],
+  )
+]
