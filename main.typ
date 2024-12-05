@@ -127,9 +127,9 @@
       #image("figures/mesh-opt.png")
     ], 
     [
-      - Approximate a surface #footnote[Figure from Hoppe et al. "Mesh Optimization", _ACM_, 1993, pp. 19-26]
+      - Approximate a surface 
       - Preserve topology
-      - Good reduction
+      - Good reduction #footnote[Figure from Hoppe et al. "Mesh Optimization", _ACM_, 1993, pp. 19-26]
 
       *However*
       - Not ideal for 2D grids
@@ -441,46 +441,147 @@
 
 #slide[
   == Compression Ratio
-  #set text(size: 20pt)
 
-  #table(
-    columns: 3,
-    align: center + horizon,
-    /* --- header --- */
-    table.header(
-      // table.cell lets us access properties such as rowspan and colspan to customize the cells
-      table.cell([*Data set*], rowspan: 2),
-      table.cell([*Size*], colspan: 2),
-      [Geometry],
-      [Nodal variable],
-    ),
-    fill: (_, y) => if y == 2 or y == 6 or y == 8 {
-      gray.lighten(75%)
-    },
-    /* --- body --- */
-    [Buksnes Waste],
-    [363 KiB],
-    [126 KiB],
-    [Random],
-    [71.2%],
-    [98.4%],
-    [SHAVER 28$degree$],
-    [93.1%],
-    [98.8%],
-    [SHAVER 30$degree$],
-    [93.8%],
-    [99.3%],
-    [PO5],
-    [7 250 KiB],
-    [2 300 KiB],
-    [SHAVER 28$degree$],
-    [93.0%],
-    [100.6%],
-    [PO6],
-    [26 200 KiB],
-    [8 460 KiB],
-    [SHAVER 28$degree$],
-    [91.6%],
-    [100%],
+  #grid(columns: (1fr, 55%), gutter: 1.5cm, 
+    [
+      - External factors
+        - Lossless compression
+      - Nodal variable closer to theoretic
+    ],
+    [
+      #set text(size: 20pt)
+      #table(
+        columns: 3,
+        align: center + horizon,
+        /* --- header --- */
+        table.header(
+          // table.cell lets us access properties such as rowspan and colspan to customize the cells
+          table.cell([*Data set*], rowspan: 2),
+          table.cell([*Size*], colspan: 2),
+          [Geometry],
+          [Nodal variable],
+        ),
+        fill: (_, y) => if y == 2 or y == 6 or y == 8 {
+          gray.lighten(75%)
+        },
+        /* --- body --- */
+        [Buksnes Waste],
+        [363 KiB],
+        [126 KiB],
+        [Random],
+        [71.2%],
+        [98.4%],
+        [SHAVER 28$degree$],
+        [93.1%],
+        [98.8%],
+        [SHAVER 30$degree$],
+        [93.8%],
+        [99.3%],
+        [PO5],
+        [7 250 KiB],
+        [2 300 KiB],
+        [SHAVER 28$degree$],
+        [93.0%],
+        [100.6%],
+        [PO6],
+        [26 200 KiB],
+        [8 460 KiB],
+        [SHAVER 28$degree$],
+        [91.6%],
+        [100%],
+      )
+    ],
   )
+]
+
+#slide[
+  == Speedup
+  #grid(columns: (55%, 1fr), gutter: 1.5cm, 
+    [
+      #set text(size: 20pt)
+      #table(
+        columns: 3,
+        align: center + horizon,
+        /* --- header --- */
+        table.header(
+          table.cell([*Data set*], rowspan: 2),
+          table.cell([*Speed / Speedup*], colspan: 2),
+          [Geometry],
+          [Nodal variable],
+        ),
+        fill: (_, y) => if y == 2 or y == 6 or y == 8 {
+          gray.lighten(75%)
+        },
+        /* --- body --- */
+        [Buksnes Waste],
+        [140 ms],
+        [22 ms],
+        [Random],
+        [3.68],
+        [2.44],
+        [SHAVER 28$degree$],
+        [3.5],
+        [1.57],
+        [SHAVER 30$degree$],
+        [2.92],
+        [1.47],
+        [PO5],
+        [2 700 ms],
+        [340 ms],
+        [SHAVER 28$degree$],
+        [1.99],
+        [1.29],
+        [PO6],
+        [10 000 ms],
+        [950 ms],
+        [SHAVER 28$degree$],
+        [1.85],
+        [0.84],
+      )
+    ],
+    [
+      - Unexpected results
+        - Geometry vs Nodal variable
+        - Buksnes vs PO5/PO6
+
+      *Theory:*
+      Discrepancies in NetCDF _Chunk Size_
+    ],
+  )
+]
+
+#slide[
+  == Summary
+  #grid(columns: (1fr, 25%, 25%), gutter: .5cm, 
+    [
+      - Compression by Grid Simplification
+      - Angle bound half-edge collapse
+
+      - Varying results
+        - Jagged visualizations
+        - Only 1.7x compression
+    ],
+    [
+      #image("figures/napp-1-grid.png")
+    ],
+    [ 
+      #image("figures/napp-2-grid.png")
+    ],
+  )
+]
+
+#slide[
+  == Future Work
+  - Angle bound _edge_ collapse
+  - Investigate other methods
+    - Spring constant
+  - "Conventional" lossy compression for variables
+
+  #image("figures/edge-collapse.svg")
+]
+
+#slide[
+  #align(center)[
+    = Questions
+  ]
 ]
