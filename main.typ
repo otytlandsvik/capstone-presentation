@@ -1,5 +1,6 @@
 #import "@preview/touying:0.6.1": *
 #import themes.simple: *
+#import "figures/fan-intersection.typ": fan-intersection
 
 #let title = "Simplifying Unstructured Grids for Oceanographic Visualizations"
 #let author = "Ole Tytlandsvik"
@@ -180,6 +181,9 @@
   - Still enforce the same angle bound $theta$
   - More collapses possible, quality better preserved
   #image("figures/edge-bad-angles.svg")
+
+== Merger Vertex Optimization
+  #fan-intersection
 
 == Architecture Overview
 #grid(columns: (1fr, 42%),
