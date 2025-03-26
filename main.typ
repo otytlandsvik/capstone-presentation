@@ -60,11 +60,24 @@
   - Tiling/Multi-resolution not trivial with _unstructured grids_
   - Inflated data size should be smaller on the client
 
+== The Solution: Lossy Compression
 
-- Grid simplification
-  - Remove vertices/nodes
-  - Maintain visualization quality
-  - *Angle bound half-edge collapse*
+*Hybrid approach*:
+
+#grid(
+  columns: (1fr, 1fr), gutter: 1.0cm,
+)[
+  - Grid simplification
+    - Remove vertices/nodes
+    - Maintain visualization quality
+    - *Angle bounded edge collapse*
+][
+  - Floating-point compression
+    - Compress one-dimensional vectors
+    - Retain enough precision for visualization
+    - The #smallcaps[zfp] compressor
+]
+
 
 
 == FVCOM grids
@@ -126,26 +139,26 @@
   ],
 )
 
-== Related Work: Mesh Simplification Operators
-  *Vertex Clustering*
+// == Related Work: Mesh Simplification Operators
+//   *Vertex Clustering*
+//
+//   Identify a "cluster" of vertices and represent them all with one vertex
+//   #image("figures/vertex-clustering.svg", width: 70%)
 
-  Identify a "cluster" of vertices and represent them all with one vertex
-  #image("figures/vertex-clustering.svg", width: 70%)
+// == Related Work: Mesh Simplification Operators
+//   *Edge Collapse*
+//
+//   Collapse an edge between two vertices, representing them with one vertex
+//   #image("figures/edge-collapse.svg")
 
-== Related Work: Mesh Simplification Operators
-  *Edge Collapse*
-
-  Collapse an edge between two vertices, representing them with one vertex
-  #image("figures/edge-collapse.svg")
-
-== Our Approach: Angle Bound Half-edge Collapse
+== In the Capstone: Angle Bounded Half-edge Collapse
   Adaptation from previous work.
   #footnote[Hinderink et al. "Angle-Bounded 2D Mesh Simplification." _Computer Aided Geometric Design_, vol 95, May 2022, p. 102085]
 
   _Half-edge collapse_ with a minimum angle criterion to inner angles
   #image("figures/half-edge-collapse.svg", width: 70%)
 
-== Our Approach: Angle Bound Half-edge Collapse
+== In the Capstone: Angle Bounded Half-edge Collapse
 #grid(columns: (1fr, 55%), gutter: 1.5cm,
   [
     - We collapse $v$ into $v'$ by collapsing the half-edge $v -> v'$
@@ -157,6 +170,16 @@
     #image("figures/half-edge-bad-angles.svg")
   ]
 )
+== Improvement: Angle Bounded Edge Collapse
+  - Can be seen as a direct advancement of the half-edge collapse
+  - Simply use the average position of $v$ and $v'$
+
+  #image("figures/edge-collapse.svg")
+
+== Improvement: Angle Bounded Edge Collapse
+  - Still enforce the same angle bound $theta$
+  - More collapses possible, quality better preserved
+  #image("figures/edge-bad-angles.svg")
 
 == Architecture Overview
 #grid(columns: (1fr, 42%),
