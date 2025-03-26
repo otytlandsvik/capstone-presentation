@@ -239,7 +239,6 @@
 )
 
 == Visualization Similarity: Speed, Buksnes Waste
-#set text(size: 18pt)
 #grid(columns: (23%, 23%, 23%, 23%) , gutter: .5cm,
   [
     #image("figures/napp-1-speed.png")
@@ -260,7 +259,6 @@
 )
 
 == Visualization Similarity: Temperature, PO5
-#set text(size: 18pt)
 #grid(columns: (1fr, 1fr), gutter: 1.5cm,
   [
     #image("figures/PO5-original-temp-2.png")
@@ -273,7 +271,6 @@
 )
 
 == Visualization Similarity: Streams, PO5
-#set text(size: 18pt)
 #grid(columns: (1fr, 1fr), gutter: 1.5cm,
   [
     #image("figures/PO5-original-streams.png")
@@ -286,116 +283,122 @@
 )
 
 == Geometric Similarity: Angle Distribution
-#set text(size: 18pt)
-#grid(columns: (23%, 23%, 23%, 23%) , gutter: .5cm,
-  [
-    #image("figures/buksnes-angles.svg")
-    Original grid
-  ],
-  [
-    #image("figures/buksnes-angles-random.svg")
-    Random reduction
-  ],
-  [
-    #image("figures/buksnes-angles-28.svg")
-    Angle bound, 28$degree$
-  ],
-  [
-    #image("figures/buksnes-angles-30.svg")
-    Angle bound, 30$degree$
-  ],
-)
+#[
+  #set text(size: 18pt)
+  #grid(columns: (23%, 23%, 23%, 23%) , gutter: .5cm,
+    [
+      #image("figures/buksnes-angles.svg")
+      Original grid
+    ],
+    [
+      #image("figures/buksnes-angles-random.svg")
+      Random reduction
+    ],
+    [
+      #image("figures/buksnes-angles-28.svg")
+      Angle bound, 28$degree$
+    ],
+    [
+      #image("figures/buksnes-angles-30.svg")
+      Angle bound, 30$degree$
+    ],
+  )
+]
 
 == Geometric Similarity: Triangulation
-#set text(size: 18pt)
-#grid(columns: (23%, 23%, 23%, 23%) , gutter: .5cm,
-  [
-    #image("figures/napp-1-grid.png")
-    Original grid
-  ],
-  [
-    #image("figures/napp-random-grid.png")
-    Random reduction
-  ],
-  [
-    #image("figures/napp-2-grid.png")
-    Angle bound, 28$degree$
-  ],
-  [
-    #image("figures/napp-3-grid.png")
-    Angle bound, 30$degree$
-  ],
-)
+#[
+  #set text(size: 18pt)
+  #grid(columns: (23%, 23%, 23%, 23%) , gutter: .5cm,
+    [
+      #image("figures/napp-1-grid.png")
+      Original grid
+    ],
+    [
+      #image("figures/napp-random-grid.png")
+      Random reduction
+    ],
+    [
+      #image("figures/napp-2-grid.png")
+      Angle bound, 28$degree$
+    ],
+    [
+      #image("figures/napp-3-grid.png")
+      Angle bound, 30$degree$
+    ],
+  )
+]
 
 == Compression Ratio
-#set text(size: 20pt)
-#table(
-  columns: 6,
-  align: center + horizon,
-  /* --- header --- */
-  table.header(
-    // table.cell lets us access properties such as rowspan and colspan to customize the cells
-    table.cell([*Data set*], rowspan: 2),
-    table.cell([*Size / Compression Ratio*], colspan: 5),
-    [Nodes],
-    [Elements],
-    [Geometry],
-    [Nodal variable],
-    [On disk],
-  ),
-  fill: (_, y) => if y == 2 or y == 6 or y == 8 {
-    gray.lighten(75%)
-  },
-  /* --- body --- */
-  [Buksnes Waste],
-  [25 136],
-  [48 332],
-  [762 KiB],
-  [98 KiB],
-  [475 686 KiB],
-  [Random],
-  [1.87],
-  [1.93],
-  [1.91],
-  [1.88],
-  [29.27],
-  [SHAVER 28$degree$],
-  [1.71],
-  [1.76],
-  [1.74],
-  [1.72],
-  [26.62],
-  [SHAVER 30$degree$],
-  [1.43],
-  [1.45],
-  [1.45],
-  [1.44],
-  [22.05],
-  [PO5],
-  [459 242],
-  [869 324],
-  [13 669 KiB],
-  [1 793 KiB],
-  [8 473 272 KiB],
-  [SHAVER 28$degree$],
-  [1.67],
-  [1.74],
-  [1.71],
-  [1.67],
-  [26.03],
-  [PO6],
-  [1 691 194],
-  [3 251 577],
-  [51 317 KiB],
-  [6 606 KiB],
-  [32 002 309 KiB],
-  [SHAVER 28$degree$],
-  [1.64],
-  [1.69],
-  [1.67],
-  [1.64],
-  [25.58],
-)
+#[
+  #set text(size: 20pt)
+  #table(
+    columns: 6,
+    align: center + horizon,
+    /* --- header --- */
+    table.header(
+      // table.cell lets us access properties such as rowspan and colspan to customize the cells
+      table.cell([*Data set*], rowspan: 2),
+      table.cell([*Size / Compression Ratio*], colspan: 5),
+      [Nodes],
+      [Elements],
+      [Geometry],
+      [Nodal variable],
+      [On disk],
+    ),
+    fill: (_, y) => if y == 2 or y == 6 or y == 8 {
+      gray.lighten(75%)
+    },
+    /* --- body --- */
+    [Buksnes Waste],
+    [25 136],
+    [48 332],
+    [762 KiB],
+    [98 KiB],
+    [475 686 KiB],
+    [Random],
+    [1.87],
+    [1.93],
+    [1.91],
+    [1.88],
+    [29.27],
+    [SHAVER 28$degree$],
+    [1.71],
+    [1.76],
+    [1.74],
+    [1.72],
+    [26.62],
+    [SHAVER 30$degree$],
+    [1.43],
+    [1.45],
+    [1.45],
+    [1.44],
+    [22.05],
+    [PO5],
+    [459 242],
+    [869 324],
+    [13 669 KiB],
+    [1 793 KiB],
+    [8 473 272 KiB],
+    [SHAVER 28$degree$],
+    [1.67],
+    [1.74],
+    [1.71],
+    [1.67],
+    [26.03],
+    [PO6],
+    [1 691 194],
+    [3 251 577],
+    [51 317 KiB],
+    [6 606 KiB],
+    [32 002 309 KiB],
+    [SHAVER 28$degree$],
+    [1.64],
+    [1.69],
+    [1.67],
+    [1.64],
+    [25.58],
+  )
+]
 
 == Compression Ratio
 
