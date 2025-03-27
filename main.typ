@@ -2,9 +2,9 @@
 #import themes.simple: *
 #import "figures/fan-intersection.typ": fan-intersection
 
-#let title = "Simplifying Unstructured Grids for Oceanographic Visualizations"
+#let title = "Simplifying Unstructured Grids for Oceanographic Visualization"
 #let author = "Ole Tytlandsvik"
-#let date = datetime(year: 2024, month: 12, day: 6)
+#let date = datetime(year: 2025, month: 4, day: 28)
 
 #set document(title: title, author: author, date: date)
 #set page(paper: "presentation-16-9")
@@ -76,7 +76,7 @@
   - Floating-point compression
     - Compress one-dimensional vectors
     - Retain enough precision for visualization
-    - The #smallcaps[zfp] compressor
+    - *The #smallcaps[zfp] compressor*
 ]
 
 
@@ -183,175 +183,252 @@
   #image("figures/edge-bad-angles.svg")
 
 == Merger Vertex Optimization
-  #fan-intersection
+  - Trivial optimization is using the centroid (what we just saw)
+  - The next step: _Kernel mean construction_
+  #image("figures/fan-intersection-paper.png")
 
-== Architecture Overview
-#grid(columns: (1fr, 42%),
-  [
-    We concentrate on the data flow of _Archives_.
+== Merger Vertex Optimization
+  #image("figures/kernel-paper.png")
 
-    - _Hindcast_ simulations
-    - _User invoked_ simulations
+== Merger Vertex Optimization
+  #grid(columns: (1fr, 1fr), gutter: 1.5cm)[
 
-    Hindcasts are periodically produced, and are the basis of visualizations.
+  - Yields better results in the paper
+  - If a solution exists, collapse is guaranteed
 
-    _These are the archives we aim to compress/reduce._
-  ],
-  [#image("figures/oceanbox-arch.svg")],
-)
+  #text(fill: orange)[Orange] is centroid, #text(fill: blue)[blue] is kernel mean construction $->$
+  ][#image("figures/kmean-results-paper.png")]
 
-#grid(columns: (1fr, 53%), gutter: 1.5cm, 
-    [#image("figures/oceanbox-arch.svg")],
-    [#image("figures/shaver-arch.svg")],
-  )
+== Floating-point Compression
+  #grid(columns: (1fr, 1fr), gutter: 1.5cm)[
+    - Interactive visualizations:
+      - Each frame is one value per node
+      - One-dimensional array slices
+      - Floating-point values (doubles)
+      - *Challenge:* compress doubles on server, decompress on client
+  ][
+    #image("figures/grid-dimension.svg")
+    #v(1cm)
+    - #smallcaps[zfp] is `C++`
+      - Was able to compile to #smallcaps[wasm]!
+  ]
 
-== Implementation Details
+// == Architecture Overview
+// #grid(columns: (1fr, 42%),
+//   [
+//     We concentrate on the data flow of _Archives_.
+//
+//     - _Hindcast_ simulations
+//     - _User invoked_ simulations
+//
+//     Hindcasts are periodically produced, and are the basis of visualizations.
+//
+//     _These are the archives we aim to compress/reduce._
+//   ],
+//   [#image("figures/oceanbox-arch.svg")],
+// )
+//
+// #grid(columns: (1fr, 53%), gutter: 1.5cm, 
+//     [#image("figures/oceanbox-arch.svg")],
+//     [#image("figures/shaver-arch.svg")],
+//   )
+//
+// == Implementation Details
+//
+// *Two-fold design:*
+// #grid(columns: 2, gutter: 1.5cm, 
+//   [
+//     _Grid Simplification_
+//     - Once per grid geometry
+//       - Can be slow
+//     - Boundary nodes preserved
+//   ],
+//   [
+//     _Archive Application_
+//     - Picking out values from full res -> compressed
+//     - Vertices a proper subset of original vertices
+//     - Also truncate depth dimension
+//   ],
+// )
 
-*Two-fold design:*
-#grid(columns: 2, gutter: 1.5cm, 
-  [
-    _Grid Simplification_
-    - Once per grid geometry
-      - Can be slow
-    - Boundary nodes preserved
-  ],
-  [
-    _Archive Application_
-    - Picking out values from full res -> compressed
-    - Vertices a proper subset of original vertices
-    - Also truncate depth dimension
-  ],
-)
+== Evaluation (so far)
 
-== Evaluation
-
-#grid(columns: 2, gutter: 1.5cm,
+#grid(columns: 2, gutter: 2.5cm,
   [
     *Visualization similarity*
     - Inspection of raster images
+      - Grid compression
+      - Floating-point compression
   ],
   [
-    *Compression/Speedup*
-    - Compression ratio of payloads
-    - Transfer speed
+    *Compression*
+    - Grid geometry
+    - Floating-point slices
+    - Combined
   ],
-  [
-    *Geometric Error*
-    - Angle distribution
-    - Triangulation inspection
-  ],
-  [
-    _For the Master:_
-    - Pixel-by-pixel comparison
-    - Client execution time
-    - Hausdorff distance
-  ],
+  // [
+  //   *Geometric Error*
+  //   - Angle distribution
+  //   - Triangulation inspection
+  // ],
+  // [
+  //   _For the Master:_
+  //   - Pixel-by-pixel comparison
+  //   - Client execution time
+  //   - Hausdorff distance
+  // ],
 )
 
-== Evaluation
-#grid(columns: 2, gutter: 1.5cm,
-  [
-    *Grids*
-    - Buksnes Waste (test)
-    - PO5 (prod)
-    - PO6 (prod)
-  ],
-  [
-    *Comparison*
-    + Original grid
-    + Randomly reduced #footnote[Triangulated with Delaunay]
-    + Angle bound, $theta = 28degree$
-    + Angle bound, $theta = 30degree$
-  ],
-)
+== Evaluation (so far)
+  *Grid:* Buksnes waste (Nappstraumen in Lofoten)
 
-== Visualization Similarity: Speed, Buksnes Waste
-#grid(columns: (23%, 23%, 23%, 23%) , gutter: .5cm,
-  [
-    #image("figures/napp-1-speed.png")
-    Original grid
-  ],
-  [
-    #image("figures/napp-4-speed.png")
-    Random reduction
-  ],
-  [
-    #image("figures/napp-2-speed.png")
-    Angle bound, 28$degree$
-  ],
-  [
-    #image("figures/napp-3-speed.png")
-    Angle bound, 30$degree$
-  ],
-)
+  *Comparison*
+  - Original grid
+  // - Randomly reduced #footnote[Triangulated with Delaunay]
+  - Angle Bounded Half-edge Collapse
+  - Angle Bounded Edge Collapse
+  - Both with a range of values for $theta$
+  #v(1cm)
 
-== Visualization Similarity: Temperature, PO5
-#grid(columns: (1fr, 1fr), gutter: 1.5cm,
-  [
-    #image("figures/PO5-original-temp-2.png")
-    Original grid
-  ],
-  [
-    #image("figures/PO5-28-temp-2.png")
-    Angle bound, 28$degree$
-  ]
-)
 
-== Visualization Similarity: Streams, PO5
-#grid(columns: (1fr, 1fr), gutter: 1.5cm,
-  [
-    #image("figures/PO5-original-streams.png")
-    Original grid
-  ],
-  [
-    #image("figures/PO5-28-streams.png")
-    Angle bound, 28$degree$
-  ]
-)
+  - _Kernel Mean Optimization not quite working yet_
 
-== Geometric Similarity: Angle Distribution
+// == Visualization Similarity: Speed, Buksnes Waste
+// #grid(columns: (23%, 23%, 23%, 23%) , gutter: .5cm,
+//   [
+//     #image("figures/napp-1-speed.png")
+//     Original grid
+//   ],
+//   [
+//     #image("figures/napp-4-speed.png")
+//     Random reduction
+//   ],
+//   [
+//     #image("figures/napp-2-speed.png")
+//     Angle bound, 28$degree$
+//   ],
+//   [
+//     #image("figures/napp-3-speed.png")
+//     Angle bound, 30$degree$
+//   ],
+// )
+//
+// == Visualization Similarity: Temperature, PO5
+// #grid(columns: (1fr, 1fr), gutter: 1.5cm,
+//   [
+//     #image("figures/PO5-original-temp-2.png")
+//     Original grid
+//   ],
+//   [
+//     #image("figures/PO5-28-temp-2.png")
+//     Angle bound, 28$degree$
+//   ]
+// )
+//
+// == Visualization Similarity: Streams, PO5
+// #grid(columns: (1fr, 1fr), gutter: 1.5cm,
+//   [
+//     #image("figures/PO5-original-streams.png")
+//     Original grid
+//   ],
+//   [
+//     #image("figures/PO5-28-streams.png")
+//     Angle bound, 28$degree$
+//   ]
+// )
+//
+// == Geometric Similarity: Angle Distribution
+// #[
+//   #set text(size: 18pt)
+//   #grid(columns: (23%, 23%, 23%, 23%) , gutter: .5cm,
+//     [
+//       #image("figures/buksnes-angles.svg")
+//       Original grid
+//     ],
+//     [
+//       #image("figures/buksnes-angles-random.svg")
+//       Random reduction
+//     ],
+//     [
+//       #image("figures/buksnes-angles-28.svg")
+//       Angle bound, 28$degree$
+//     ],
+//     [
+//       #image("figures/buksnes-angles-30.svg")
+//       Angle bound, 30$degree$
+//     ],
+//   )
+// ]
+//
+// == Geometric Similarity: Triangulation
+// #[
+//   #set text(size: 18pt)
+//   #grid(columns: (23%, 23%, 23%, 23%) , gutter: .5cm,
+//     [
+//       #image("figures/napp-1-grid.png")
+//       Original grid
+//     ],
+//     [
+//       #image("figures/napp-random-grid.png")
+//       Random reduction
+//     ],
+//     [
+//       #image("figures/napp-2-grid.png")
+//       Angle bound, 28$degree$
+//     ],
+//     [
+//       #image("figures/napp-3-grid.png")
+//       Angle bound, 30$degree$
+//     ],
+//   )
+// ]
+
+== Compression Ratio
 #[
-  #set text(size: 18pt)
-  #grid(columns: (23%, 23%, 23%, 23%) , gutter: .5cm,
-    [
-      #image("figures/buksnes-angles.svg")
-      Original grid
-    ],
-    [
-      #image("figures/buksnes-angles-random.svg")
-      Random reduction
-    ],
-    [
-      #image("figures/buksnes-angles-28.svg")
-      Angle bound, 28$degree$
-    ],
-    [
-      #image("figures/buksnes-angles-30.svg")
-      Angle bound, 30$degree$
-    ],
-  )
-]
-
-== Geometric Similarity: Triangulation
-#[
-  #set text(size: 18pt)
-  #grid(columns: (23%, 23%, 23%, 23%) , gutter: .5cm,
-    [
-      #image("figures/napp-1-grid.png")
-      Original grid
-    ],
-    [
-      #image("figures/napp-random-grid.png")
-      Random reduction
-    ],
-    [
-      #image("figures/napp-2-grid.png")
-      Angle bound, 28$degree$
-    ],
-    [
-      #image("figures/napp-3-grid.png")
-      Angle bound, 30$degree$
-    ],
+  #set text(size: 20pt)
+  #table(
+    columns: 5,
+    align: center + horizon,
+    /* --- header --- */
+    table.header(
+      table.cell([*Angle Bound*], rowspan: 3),
+      table.cell([*Size / Compression Ratio*], colspan: 4),
+      table.cell([Half-edge], colspan: 2),
+      table.cell([Full-edge], colspan: 2),
+      [Nodes],
+      [Elements],
+      [Nodes],
+      [Elements],
+    ),
+    fill: (_, y) => if y == 3 {
+      gray.lighten(75%)
+    },
+    /* --- body --- */
+    [Full resolution],
+    [25 136],
+    [48 332],
+    [25 136],
+    [48 332],
+    [28$degree$],
+    [1.71],
+    [1.76],
+    [1.80],
+    [1.86],
+    [30$degree$],
+    [1.43],
+    [1.45],
+    [1.77],
+    [1.82],
+    [34$degree$],
+    [1.09],
+    [1.09],
+    [1.74],
+    [1.79],
+    [40$degree$],
+    [1.00],
+    [1.00],
+    [1.43],
+    [1.46],
   )
 ]
 
@@ -359,126 +436,98 @@
 #[
   #set text(size: 20pt)
   #table(
-    columns: 6,
+    columns: 5,
     align: center + horizon,
     /* --- header --- */
     table.header(
-      // table.cell lets us access properties such as rowspan and colspan to customize the cells
-      table.cell([*Data set*], rowspan: 2),
-      table.cell([*Size / Compression Ratio*], colspan: 5),
-      [Nodes],
-      [Elements],
-      [Geometry],
-      [Nodal variable],
-      [On disk],
+      table.cell([*Angle Bound*], rowspan: 3),
+      table.cell([*Size / Compression Ratio*], colspan: 4),
+      table.cell([Half-edge], colspan: 2),
+      table.cell([Full-edge], colspan: 2),
+      [No #smallcaps[zfp]],
+      [#smallcaps[zfp]],
+      [No #smallcaps[zfp]],
+      [#smallcaps[zfp]],
     ),
-    fill: (_, y) => if y == 2 or y == 6 or y == 8 {
+    fill: (_, y) => if y == 3 {
       gray.lighten(75%)
     },
     /* --- body --- */
-    [Buksnes Waste],
-    [25 136],
-    [48 332],
-    [762 KiB],
-    [98 KiB],
-    [475 686 KiB],
-    [Random],
-    [1.87],
-    [1.93],
-    [1.91],
-    [1.88],
-    [29.27],
-    [SHAVER 28$degree$],
-    [1.71],
-    [1.76],
-    [1.74],
+    [Full resolution],
+    table.cell([98KiB], colspan: 4),
+    [28$degree$],
     [1.72],
-    [26.62],
-    [SHAVER 30$degree$],
-    [1.43],
-    [1.45],
-    [1.45],
-    [1.44],
-    [22.05],
-    [PO5],
-    [459 242],
-    [869 324],
-    [13 669 KiB],
-    [1 793 KiB],
-    [8 473 272 KiB],
-    [SHAVER 28$degree$],
-    [1.67],
-    [1.74],
-    [1.71],
-    [1.67],
-    [26.03],
-    [PO6],
-    [1 691 194],
-    [3 251 577],
-    [51 317 KiB],
-    [6 606 KiB],
-    [32 002 309 KiB],
-    [SHAVER 28$degree$],
-    [1.64],
-    [1.69],
-    [1.67],
-    [1.64],
-    [25.58],
+    [],
+    [1.81],
+    [],
+    [30$degree$],
+    [],
+    [],
+    [],
+    [],
+    [34$degree$],
+    [],
+    [],
+    [],
+    [],
+    [40$degree$],
+    [],
+    [],
+    [],
+    [],
   )
 ]
 
-== Compression Ratio
-
-#grid(columns: (1fr, 55%), gutter: 1.5cm, 
-  [
-    - External factors
-      - Lossless compression
-    - Nodal variable closer to theoretic
-  ],
-  [
-    #set text(size: 20pt)
-    #table(
-      columns: 3,
-      align: center + horizon,
-      /* --- header --- */
-      table.header(
-        // table.cell lets us access properties such as rowspan and colspan to customize the cells
-        table.cell([*Data set*], rowspan: 2),
-        table.cell([*Size*], colspan: 2),
-        [Geometry],
-        [Nodal variable],
-      ),
-      fill: (_, y) => if y == 2 or y == 6 or y == 8 {
-        gray.lighten(75%)
-      },
-      /* --- body --- */
-      [Buksnes Waste],
-      [363 KiB],
-      [126 KiB],
-      [Random],
-      [71.2%],
-      [98.4%],
-      [SHAVER 28$degree$],
-      [93.1%],
-      [98.8%],
-      [SHAVER 30$degree$],
-      [93.8%],
-      [99.3%],
-      [PO5],
-      [7 250 KiB],
-      [2 300 KiB],
-      [SHAVER 28$degree$],
-      [93.0%],
-      [100.6%],
-      [PO6],
-      [26 200 KiB],
-      [8 460 KiB],
-      [SHAVER 28$degree$],
-      [91.6%],
-      [100%],
-    )
-  ],
-)
+// #grid(columns: (1fr, 55%), gutter: 1.5cm, 
+//   [
+//     - External factors
+//       - Lossless compression
+//     - Nodal variable closer to theoretic
+//   ],
+//   [
+//     #set text(size: 20pt)
+//     #table(
+//       columns: 3,
+//       align: center + horizon,
+//       /* --- header --- */
+//       table.header(
+//         // table.cell lets us access properties such as rowspan and colspan to customize the cells
+//         table.cell([*Data set*], rowspan: 2),
+//         table.cell([*Size*], colspan: 2),
+//         [Geometry],
+//         [Nodal variable],
+//       ),
+//       fill: (_, y) => if y == 2 or y == 6 or y == 8 {
+//         gray.lighten(75%)
+//       },
+//       /* --- body --- */
+//       [Buksnes Waste],
+//       [363 KiB],
+//       [126 KiB],
+//       [Random],
+//       [71.2%],
+//       [98.4%],
+//       [SHAVER 28$degree$],
+//       [93.1%],
+//       [98.8%],
+//       [SHAVER 30$degree$],
+//       [93.8%],
+//       [99.3%],
+//       [PO5],
+//       [7 250 KiB],
+//       [2 300 KiB],
+//       [SHAVER 28$degree$],
+//       [93.0%],
+//       [100.6%],
+//       [PO6],
+//       [26 200 KiB],
+//       [8 460 KiB],
+//       [SHAVER 28$degree$],
+//       [91.6%],
+//       [100%],
+//     )
+//   ],
+// )
 
 == Speedup
 #grid(columns: (55%, 1fr), gutter: 1.5cm, 
@@ -552,13 +601,12 @@
   ],
 )
 
-== Future Work
-- Angle bound _edge_ collapse
-- Investigate other methods
-  - Spring constant
-- "Conventional" lossy compression for variables
-
-#image("figures/edge-collapse.svg")
+== Remaining Work
+- Working Kernel Mean Optimization
+- Explore #smallcaps[zfp] configuration
+- Evaluation
+  - Pixelwise difference
+  - Timings
 
 #slide[
   #align(center)[
