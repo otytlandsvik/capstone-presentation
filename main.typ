@@ -293,25 +293,90 @@
 
   - _Kernel Mean Optimization not quite working yet_
 
-// == Visualization Similarity: Speed, Buksnes Waste
-// #grid(columns: (23%, 23%, 23%, 23%) , gutter: .5cm,
-//   [
-//     #image("figures/napp-1-speed.png")
-//     Original grid
-//   ],
-//   [
-//     #image("figures/napp-4-speed.png")
-//     Random reduction
-//   ],
-//   [
-//     #image("figures/napp-2-speed.png")
-//     Angle bound, 28$degree$
-//   ],
-//   [
-//     #image("figures/napp-3-speed.png")
-//     Angle bound, 30$degree$
-//   ],
-// )
+== Visualization Similarity: Speed
+#[
+  #set text(size: 18pt)
+  #grid(columns: (23%, 23%, 23%, 23%) , gutter: .5cm,
+    [
+      #image("figures/napp-full-speed.png")
+      Original grid
+    ],
+    [
+      #image("figures/napp-random-speed.png")
+      Random reduction
+    ],
+    [
+      #image("figures/napp-half-28-speed.png")
+      Half-edge, 28$degree$
+    ],
+    [
+      #image("figures/napp-full-28-speed.png")
+      Full-edge, 28$degree$
+    ],
+  )
+]
+
+== Visualization Similarity: Speed
+#[
+  #set text(size: 18pt)
+  #grid(columns: (1fr, 1fr, 1fr) , gutter: .5cm,
+    [
+      #image("figures/napp-half-28-speed.png")
+      Half-edge, 28$degree$
+    ],
+    [
+      #image("figures/napp-full-28-speed.png")
+      Full-edge, 28$degree$
+    ],
+    [
+      #image("figures/napp-full-40-speed.png")
+      Full-edge, 40$degree$
+    ],
+  )
+]
+
+== Visualization Similarity: Triangulation
+#[
+  #set text(size: 18pt)
+  #grid(columns: (23%, 23%, 23%, 23%) , gutter: .5cm,
+    [
+      #image("figures/napp-full-grid.png")
+      Original grid
+    ],
+    [
+      #image("figures/napp-random-grid.png")
+      Random reduction
+    ],
+    [
+      #image("figures/napp-half-28-grid.png")
+      Half-edge, 28$degree$
+    ],
+    [
+      #image("figures/napp-full-28-grid.png")
+      Full-edge, 28$degree$
+    ],
+  )
+]
+
+== Visualization Similarity: Triangulation
+#[
+  #set text(size: 18pt)
+  #grid(columns: (1fr, 1fr, 1fr) , gutter: .5cm,
+    [
+      #image("figures/napp-half-28-grid.png")
+      Half-edge, 28$degree$
+    ],
+    [
+      #image("figures/napp-full-28-grid.png")
+      Full-edge, 28$degree$
+    ],
+    [
+      #image("figures/napp-full-40-grid.png")
+      Full-edge, 40$degree$
+    ],
+  )
+]
+
 //
 // == Visualization Similarity: Temperature, PO5
 // #grid(columns: (1fr, 1fr), gutter: 1.5cm,
@@ -456,148 +521,43 @@
     [Full resolution],
     table.cell([98KiB], colspan: 4),
     [28$degree$],
-    [1.72],
-    [],
-    [1.81],
-    [],
+    [1.71],
+    [5.76],
+    [1.80],
+    [6.12],
     [30$degree$],
-    [],
-    [],
-    [],
-    [],
+    [1.43],
+    [5.16],
+    [1.77],
+    [6.13],
     [34$degree$],
-    [],
-    [],
-    [],
-    [],
+    [1.09],
+    [3.92],
+    [1.74],
+    [5.76],
     [40$degree$],
-    [],
-    [],
-    [],
-    [],
+    [1.00],
+    [3.63],
+    [1.43],
+    [4.90],
   )
 ]
 
-// #grid(columns: (1fr, 55%), gutter: 1.5cm, 
-//   [
-//     - External factors
-//       - Lossless compression
-//     - Nodal variable closer to theoretic
-//   ],
-//   [
-//     #set text(size: 20pt)
-//     #table(
-//       columns: 3,
-//       align: center + horizon,
-//       /* --- header --- */
-//       table.header(
-//         // table.cell lets us access properties such as rowspan and colspan to customize the cells
-//         table.cell([*Data set*], rowspan: 2),
-//         table.cell([*Size*], colspan: 2),
-//         [Geometry],
-//         [Nodal variable],
-//       ),
-//       fill: (_, y) => if y == 2 or y == 6 or y == 8 {
-//         gray.lighten(75%)
-//       },
-//       /* --- body --- */
-//       [Buksnes Waste],
-//       [363 KiB],
-//       [126 KiB],
-//       [Random],
-//       [71.2%],
-//       [98.4%],
-//       [SHAVER 28$degree$],
-//       [93.1%],
-//       [98.8%],
-//       [SHAVER 30$degree$],
-//       [93.8%],
-//       [99.3%],
-//       [PO5],
-//       [7 250 KiB],
-//       [2 300 KiB],
-//       [SHAVER 28$degree$],
-//       [93.0%],
-//       [100.6%],
-//       [PO6],
-//       [26 200 KiB],
-//       [8 460 KiB],
-//       [SHAVER 28$degree$],
-//       [91.6%],
-//       [100%],
-//     )
-//   ],
-// )
-
-== Speedup
-#grid(columns: (55%, 1fr), gutter: 1.5cm, 
-  [
-    #set text(size: 20pt)
-    #table(
-      columns: 3,
-      align: center + horizon,
-      /* --- header --- */
-      table.header(
-        table.cell([*Data set*], rowspan: 2),
-        table.cell([*Speed / Speedup*], colspan: 2),
-        [Geometry],
-        [Nodal variable],
-      ),
-      fill: (_, y) => if y == 2 or y == 6 or y == 8 {
-        gray.lighten(75%)
-      },
-      /* --- body --- */
-      [Buksnes Waste],
-      [140 ms],
-      [22 ms],
-      [Random],
-      [3.68],
-      [2.44],
-      [SHAVER 28$degree$],
-      [3.5],
-      [1.57],
-      [SHAVER 30$degree$],
-      [2.92],
-      [1.47],
-      [PO5],
-      [2 700 ms],
-      [340 ms],
-      [SHAVER 28$degree$],
-      [1.99],
-      [1.29],
-      [PO6],
-      [10 000 ms],
-      [950 ms],
-      [SHAVER 28$degree$],
-      [1.85],
-      [0.84],
-    )
-  ],
-  [
-    - Unexpected results
-      - Geometry vs Nodal variable
-      - Buksnes vs PO5/PO6
-
-    *Theory:*
-    Discrepancies in NetCDF _Chunk Size_
-  ],
-)
 
 == Summary
-#grid(columns: (1fr, 25%, 25%), gutter: .5cm, 
+#grid(columns: (1fr, 25%), gutter: .5cm, 
   [
-    - Compression by Grid Simplification
-    - Angle bound half-edge collapse
+    - *Grid Simplification* and *Floating-point Compression*
+    - Angle bound half-edge collapse vs edge collapse
+      - Edge collapse significantly better
 
-    - Varying results
-      - Jagged visualizations
-      - Only 1.7x compression
+    - Improved results so far
+      - Better visualizations
+      - 1.7x $->$ 6x compression (array slices)
   ],
   [
-    #image("figures/napp-1-grid.png")
-  ],
-  [ 
-    #image("figures/napp-2-grid.png")
+    #image("figures/napp-full-grid.png")
+    #image("figures/napp-full-40-grid.png")
   ],
 )
 
@@ -605,6 +565,7 @@
 - Working Kernel Mean Optimization
 - Explore #smallcaps[zfp] configuration
 - Evaluation
+  - Visualization results for #smallcaps[zfp]
   - Pixelwise difference
   - Timings
 
